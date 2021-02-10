@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Quick helper that will fade a black screen in and out, with the possibility to give a function to call when the fade
-/// in finish (so the screen is full dark)
+/// is halfway through (so the screen is full dark)
 /// </summary>
 public class LoadingPanel : MonoBehaviour
 {

@@ -24,8 +24,8 @@ public class EntryPoint : MonoBehaviour
     }
 
     /// <summary>
-    /// This be called either
-    /// - By the Menu script that will create it at the game launch (in a "real" game, there could be a Loading scene loaded
+    /// This is called either by :
+    /// - the Menu script that will create it at the game launch (in a full game, there could be a Loading scene loaded
     /// in first that will create it and display a progress bar possibly)
     /// - On the first call to Instance if it wasn't created (in editor only, see comment in that function)
     ///
@@ -33,8 +33,8 @@ public class EntryPoint : MonoBehaviour
     /// </summary>
     public static void Create()
     {
-        //in this sample we use the main menu scene as initialisation. That mean going back to main menu can retrigger
-        //This initialization, so we check if we were already initialized. In a full project, this init would be called
+        //in this sample we use the main menu scene as initialisation. That mean going back to main menu can trigger again
+        //this initialization. So we check if we were already initialized. In a full project, this Create would be called
         //in a scene only run when the game launch, *before* main menu scene.
         if(s_Instance != null)
             return;
@@ -48,6 +48,7 @@ public class EntryPoint : MonoBehaviour
         
         DontDestroyOnLoad(s_Instance);
         
+        //This will init the Database and create the lookup dictionary matching an Item ScriptableObject and it's unique ID
         s_Instance.ItemDB.Init();
         
         s_Instance.m_PanelInstance = Instantiate(s_Instance.PanelPrefab);
