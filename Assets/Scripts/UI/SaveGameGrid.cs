@@ -29,7 +29,6 @@ public class SaveGameGrid : MonoBehaviour
         for (int i = 0; i < Entries.Length; ++i)
         {
             var i1 = i;
-            Entries[i].EntryButton.onClick.RemoveAllListeners();
             Entries[i].EntryButton.onClick.AddListener(() => ButtonClicked(i1));
 
             if (m_SaveInfo[i] != null)

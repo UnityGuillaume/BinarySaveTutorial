@@ -15,7 +15,11 @@ public class LootableObject : ClickableObject
     
     public override void Reached(CharacterControl player)
     {
-        player.AddItemToInventory(LootableItem);
+        player.Take(this);
+    }
+
+    public void Looted()
+    {
         OnLooted?.Invoke();
         Destroy(gameObject);
     }

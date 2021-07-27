@@ -9,14 +9,15 @@ using UnityEngine;
 /// </summary>
 public class PlayerSystem
 {
-    private static CharacterControl s_PlayerInstance;
-    private static GameObject s_Root;
+    private static PlayerSystem s_Instance;
+
+    static CharacterControl s_PlayerInstance;
 
     static void InstantiatePlayer()
     {
-        s_Root = Object.Instantiate(EntryPoint.Instance.PlayerPrefab);
-        s_PlayerInstance = s_Root.GetComponentInChildren<CharacterControl>();
-        Object.DontDestroyOnLoad(s_Root); 
+        var obj = Object.Instantiate(EntryPoint.Instance.PlayerPrefab);
+        s_PlayerInstance = obj.GetComponentInChildren<CharacterControl>();
+        Object.DontDestroyOnLoad(obj); 
     }
 
     public static void SpawnAt(Transform pos)
@@ -40,11 +41,5 @@ public class PlayerSystem
     public static void SaveData(BinaryWriter writer)
     {
         s_PlayerInstance.SavePlayerData(writer);
-    }
-
-    public static void Cleanup()
-    {
-        Object.Destroy(s_Root);
-        s_PlayerInstance = null;
     }
 }

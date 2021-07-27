@@ -10,13 +10,15 @@ public class LockedDoor : ClickableObject
     
     private void OnEnable()
     {
-        //When we load into the scene in which that door is, we need to remove it if it was previously open.
+        //When we load into the scene in which that door is, we need to open it if it was previously open.
         //If the flag composed of levelname_uniquename is true (if it don't exist that function return false) that mean
-        //it was indeed open, so we can destroy the door (depending on the game, this could be instead setting the open
+        //it was indeed open, so we can set the door in open state already (depending on the game, this could be instead setting the open
         // animation state, or changing the gameobject used etc...)
         if (LevelSystem.Instance.GetFlag(UniqueName))
         {
-            Destroy(gameObject);
+            var animator = GetComponentInChildren<Animator>();
+            animator.SetBool("Opened", true);
+            animator.PlayInFixedTime("Open", 0, 0.0f);
         }
     }
 
@@ -26,7 +28,8 @@ public class LockedDoor : ClickableObject
 
         if (player.Inventory.Find(Item => Item.UniqueID == Key.UniqueID) != null)
         {
-            Destroy(gameObject);
+            var animator = GetComponentInChildren<Animator>();
+            animator.SetBool("Opened", true);
             
             //we opened that door, so we set the flag with the door UniqueName to true. That way if we load back into that
             //scene (either from loading a save file or exiting and coming back to that scene) we can check the flag value

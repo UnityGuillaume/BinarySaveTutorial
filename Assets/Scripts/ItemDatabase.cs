@@ -9,8 +9,7 @@ using UnityEditor;
 /// <summary>
 /// This keep a list of all items in the game, and build a dictionary matching their UniqueId to their instance when the Init
 /// function is called (called by the EntryPoint initialization). This allow to have a single entry point to looking up
-/// all object in the game (e.g. save file only contain the uniqueId of the item, that is looked up on load in this).
-/// The Items list is built in the Editor on the ScriptableObject instance.
+/// all object in the game (e.g. save file only contain the uniqueId of the item, that is looked up on load in this) 
 /// </summary>
 [CreateAssetMenu(fileName = "Itemdb.asset", menuName = "SaveLoad/Item Database")]
 public class ItemDatabase : ScriptableObject

@@ -1,29 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Handle everything related to the player character : input handling, movement, inventory and saving/loading its data
 /// </summary>
 public class CharacterControl : MonoBehaviour
 {
-    public CinemachineVirtualCamera VCam;
-    public Camera GameCamera;
-    
     public List<Item> Inventory => m_Inventory;
 
     private NavMeshAgent m_Agent;
     private Animator m_Animator;
-    private int m_TerrainLayer;
+    private int m_LevelLayer;
     private int m_ItemLayer;
 
     private int m_SpeedParamID;
+    private int m_TakeParamID;
+
+    private LootableObject m_TakingObject = null;
 
     private List<Item> m_Inventory;
 
@@ -36,73 +33,93 @@ public class CharacterControl : MonoBehaviour
         m_Animator = GetComponentInChildren<Animator>();
 
         m_SpeedParamID = Animator.StringToHash("Speed");
+        m_TakeParamID = Animator.StringToHash("Take");
 
         m_ItemLayer = LayerMask.NameToLayer("Item"); 
-        m_TerrainLayer = LayerMask.NameToLayer("Terrain");
+        m_LevelLayer = LayerMask.NameToLayer("Level");
 
         Init();
     }
 
     void Start()
     {
-        
+        UIHandler.Instance.UpdateInventory(this);
     }
 
     void Init()
     {
         m_Inventory = new List<Item>();
-        UIHandler.Instance.UpdateInventory(this);
     }
     
     void Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (m_TakingObject != null)
         {
-            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit = new RaycastHit();
-            
-            if (Physics.Raycast(ray, out hit, 1000.0f, 1 << m_TerrainLayer | 1 << m_ItemLayer))
+            if (!m_Animator.IsInTransition(0) && !m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Take"))
             {
-                ClickableObject itm = hit.collider.GetComponentInChildren<ClickableObject>();
-
-                if(m_PreviousHighlighted != null)
-                    m_PreviousHighlighted.Highlight(false);
-                
-                if (itm != null)
-                {
-                    itm.Highlight(true);
-                    m_PreviousHighlighted = itm;
-                    
-                    if(Input.GetMouseButtonDown(0))
-                        m_TargetObject = itm;
-                }
-                else
-                {
-                    if(Input.GetMouseButtonDown(0))
-                        m_TargetObject = null;
-                }
-
-                if(Input.GetMouseButtonDown(0))
-                    m_Agent.SetDestination(hit.point);
+                AddItemToInventory(m_TakingObject.LootableItem);
+                m_TakingObject.Looted();
+                m_TakingObject = null;
             }
         }
-
-        if (m_TargetObject != null)
+        else
         {
-            float distance = m_TargetObject.GetDistance(transform.position);
-            if (distance <= 1.0f)
+            if (!EventSystem.current.IsPointerOverGameObject())
             {
-                m_TargetObject.Reached(this);
-                m_Agent.ResetPath();
-                m_TargetObject = null;
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit = new RaycastHit();
+
+                if (Physics.Raycast(ray, out hit, 1000.0f, 1 << m_LevelLayer | 1 << m_ItemLayer))
+                {
+                    ClickableObject itm = hit.collider.GetComponentInChildren<ClickableObject>();
+
+                    if (m_PreviousHighlighted != null)
+                        m_PreviousHighlighted.Highlight(false);
+
+                    if (itm != null)
+                    {
+                        itm.Highlight(true);
+                        m_PreviousHighlighted = itm;
+
+                        if (Input.GetMouseButtonDown(0))
+                            m_TargetObject = itm;
+                    }
+                    else
+                    {
+                        if (Input.GetMouseButtonDown(0))
+                            m_TargetObject = null;
+                    }
+
+                    if (Input.GetMouseButtonDown(0))
+                        m_Agent.SetDestination(hit.point);
+                }
+            }
+            
+            if (m_TargetObject != null)
+            {
+                float distance = m_TargetObject.GetDistance(transform.position);
+                if (distance <= 1.0f)
+                {
+                    m_TargetObject.Reached(this);
+                    m_Agent.ResetPath();
+                    m_TargetObject = null;
+                }
             }
         }
         
         m_Animator.SetFloat(m_SpeedParamID, m_Agent.velocity.magnitude / m_Agent.speed);
         
+        if(CameraHandler.Instance != null)
+            CameraHandler.Instance.UpdateCameraPosition(transform.position);
         
         if(Input.GetKeyDown(KeyCode.Escape))
             PauseMenu.Toggle();
+    }
+
+    public void Take(LootableObject item)
+    {
+        m_Animator.SetTrigger(m_TakeParamID);
+        m_TakingObject = item;
     }
 
     public void AddItemToInventory(Item item)
@@ -118,8 +135,10 @@ public class CharacterControl : MonoBehaviour
         //we move the agent too, otherwise its old position could override our new position when loading into the same scene
         m_Agent.Warp(pos);
         
+        if(CameraHandler.Instance != null)
+            CameraHandler.Instance.TeleportToPlayer(pos);
+        
         transform.SetPositionAndRotation(pos, rot);
-        VCam.OnTargetObjectWarped(VCam.Follow, offset);
     }
 
     //Called by the PlayerSystem when a save is triggered.

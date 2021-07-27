@@ -15,4 +15,4 @@ MonoBehaviour:
   UniqueID: first_key
   DisplayName: First Key
   Icone: {fileID: 21300000, guid: 3c9b1bd688b22324c9bc5eb12cc12aea, type: 3}
-  Prefab: {fileID: 1948317261022017306, guid: 6d3c9d95d4cded146bffced8829b698c, type: 3}
+  Prefab: {fileID: 2213213877762237731, guid: 893f79947d2f3064081775e63bf817cc, type: 3}
