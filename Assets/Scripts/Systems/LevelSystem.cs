@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 /// Also got Save/Get flag function that will append the level unique name to the flag before writing it. This can allow
 /// to have similar object in each level but they all set flag based on which level they are on (like collectibles for example).
 /// </summary>
+[DefaultExecutionOrder(-100)]
 public class LevelSystem : MonoBehaviour
 {
     private static LevelSystem s_Instance;
