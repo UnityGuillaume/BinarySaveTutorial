@@ -44,7 +44,7 @@ public class PauseMenu : MonoBehaviour
         {
             if (saveFile != null)
             {
-                EntryPoint.LoadingPanel.Fade(1.0f, () => { SaveSystem.Load(saveFile); });
+                EntryPoint.StartPermanentCoroutine(SaveSystem.Load(saveFile));
             }
 
             s_Instance.gameObject.SetActive(false);
@@ -54,6 +54,9 @@ public class PauseMenu : MonoBehaviour
     public void Quit()
     {
         s_Instance.gameObject.SetActive(false);
+        UIHandler.Instance.gameObject.SetActive(false);
+        PlayerSystem.Cleanup();
+        SaveSystem.Reset();
         SceneManager.LoadScene(0);
     }
 }

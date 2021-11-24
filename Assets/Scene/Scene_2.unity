@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44682926, g: 0.49670243, b: 0.57496816, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0.99999946, b: 0.99999946, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -183,12 +183,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5854788987134406531, guid: 10f0b46f69a96c548a2e72c61901c56f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.10947956
-      objectReference: {fileID: 0}
-    - target: {fileID: 5854788987134406531, guid: 10f0b46f69a96c548a2e72c61901c56f, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.9939891
+      objectReference: {fileID: 0}
+    - target: {fileID: 5854788987134406531, guid: 10f0b46f69a96c548a2e72c61901c56f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.10947956
       objectReference: {fileID: 0}
     - target: {fileID: 5854788987134406531, guid: 10f0b46f69a96c548a2e72c61901c56f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -348,6 +348,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &274731323
@@ -840,12 +841,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 86a8bee31e57b9d4698e5c5039e0e55b, type: 2}
     - target: {fileID: 2404994458152350153, guid: f62f5d50b5392b241b682fc7d15f4ac7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
-    - target: {fileID: 2404994458152350153, guid: f62f5d50b5392b241b682fc7d15f4ac7, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2404994458152350153, guid: f62f5d50b5392b241b682fc7d15f4ac7, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2512904626409537230, guid: f62f5d50b5392b241b682fc7d15f4ac7, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -981,6 +982,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1283088544
@@ -1193,6 +1195,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1730938083
@@ -1329,6 +1332,7 @@ GameObject:
   - component: {fileID: 2025792754}
   - component: {fileID: 2025792753}
   - component: {fileID: 2025792756}
+  - component: {fileID: 2025792757}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1429,9 +1433,22 @@ MonoBehaviour:
   m_StopNaN: 0
   m_Dithering: 0
   m_ClearDepth: 1
+  m_AllowXRRendering: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &2025792757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025792752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d29fcb59c729dd841ba608822815840a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2057126169406120976
 PrefabInstance:
   m_ObjectHideFlags: 0

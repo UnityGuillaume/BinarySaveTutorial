@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.SceneManagement;
@@ -42,12 +43,17 @@ public class SaveSystem : MonoBehaviour
     {
         SaveGameLocation = Application.persistentDataPath + "/saves/";
         
-        s_Flags = new Dictionary<string, bool>();
-
         if (!Directory.Exists(SaveGameLocation))
             Directory.CreateDirectory(SaveGameLocation);
         
         s_TexturePool = new Texture2D[8];
+        
+        Reset();
+    }
+
+    public static void Reset()
+    {
+        s_Flags = new Dictionary<string, bool>();
     }
 
     public static List<SaveHeaderData> GetSaveInfo()
@@ -107,17 +113,26 @@ public class SaveSystem : MonoBehaviour
         return flag;
     }
 
-    public static void Load(string saveName)
+    public static IEnumerator Load(string saveName)
     {
         string location = SaveGameLocation + saveName;
 
         if (!File.Exists(location))
         {
             Debug.LogError("Non existing save file");
-            return;
+            yield break;
         }
         
-        s_Reader = new BinaryReader(new FileStream(location, FileMode.Open));
+        //we copy our file into memory. As we will wait for some level loading to happen before continuing, we may have
+        //case where if the game where to crash/forced to quit mid load, it would leave an open file.
+        MemoryStream memStream = new MemoryStream();
+        using (FileStream fileStream = File.OpenRead(location))
+        {
+            memStream.SetLength(fileStream.Length);
+            fileStream.Read(memStream.GetBuffer(), 0, (int)fileStream.Length);
+        }
+
+        s_Reader = new BinaryReader(memStream);
         
         //we are storing the loaded save file header, may be useful for other system loading, especially the version
         s_SaveData = new SaveHeaderData();
@@ -139,6 +154,14 @@ public class SaveSystem : MonoBehaviour
         
         //read the level we need to load
         LevelSystem.LoadData(s_Reader);
+        
+        //wait till the level have finished loading so loading the player will have access to the navmesh and other
+        //setting of the needed level
+        while (LevelSystem.InTransition)
+        {
+            yield return null;
+        }
+
         //read the player data. We don't have to wait for the level to be loaded (this will take multiple frames as we fade to black first)
         PlayerSystem.LoadData(s_Reader);
         

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Allow for an access from anywhere to the UI that display the Inventory to easily update it.
+/// </summary>
 public class UIHandler : MonoBehaviour
 {
     public static UIHandler Instance => s_Instance;

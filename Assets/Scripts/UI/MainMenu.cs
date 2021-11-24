@@ -15,6 +15,7 @@ public class MainMenu : MonoBehaviour
 
     public void New()
     {
+        UIHandler.Instance.gameObject.SetActive(true);
         LevelSystem.LoadInScene(1, "level1_start");
     }
 
@@ -22,7 +23,12 @@ public class MainMenu : MonoBehaviour
     {
         Grid.Show(true, (saveFile) =>
         {
-            SaveSystem.Load(saveFile);
+            UIHandler.Instance.gameObject.SetActive(true);
+            
+            //our main menu will be destroyed when we change scene, so if we were to use StartCoroutine the coroutine
+            //would stop as soon as we transition. Instead we use the helper function on the entry point to create a 
+            //"permanent" coroutine that survive scene change.
+            EntryPoint.StartPermanentCoroutine(SaveSystem.Load(saveFile));
         });
     }
 

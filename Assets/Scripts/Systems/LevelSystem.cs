@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,17 +8,20 @@ using UnityEngine.SceneManagement;
 /// Also got Save/Get flag function that will append the level unique name to the flag before writing it. This can allow
 /// to have similar object in each level but they all set flag based on which level they are on (like collectibles for example).
 /// </summary>
-[DefaultExecutionOrder(-100)]
 public class LevelSystem : MonoBehaviour
 {
     private static LevelSystem s_Instance;
     public static LevelSystem Instance => s_Instance;
 
+    
+    private static bool s_InTransition = false;
+    public static bool InTransition => s_InTransition;
+    
     private static bool s_IsLoading = false;
     
     public string UniqueName;
     private bool m_Started = false;
-    
+
     private void Awake()
     {
         s_Instance = this;
@@ -26,7 +30,7 @@ public class LevelSystem : MonoBehaviour
     private void Start()
     {
         m_Started = true;
-        
+
         //spawning the player to the current active spawner
         var sp = SpawnPoint.GetActiveSpawnPoint(!s_IsLoading);
         if (sp != null)
@@ -69,6 +73,13 @@ public class LevelSystem : MonoBehaviour
         s_IsLoading = isLoading;
         
         SpawnPoint.SetTargetSpawn(spawnPoint);
-        EntryPoint.LoadingPanel.Fade(1.0f, () => {  SceneManager.LoadScene(scene); });
+        s_InTransition = true;
+        EntryPoint.LoadingPanel.Fade(1.0f, () =>
+        {
+            SceneManager.LoadSceneAsync(scene).completed += operation =>
+            {
+                s_InTransition = false;
+            };
+        });
     }
 }
